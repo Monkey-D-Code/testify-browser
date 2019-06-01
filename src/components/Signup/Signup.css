@@ -1,0 +1,14 @@
+.signup-button{
+    display : block;
+    margin : auto;
+    width : 50%;
+    height : 4em;
+    font-family: 'Montserrat', sans-serif;
+    background-color: #A846A0;
+    border: none;
+    outline : none;
+    color: aliceblue;
+}
+.signup-button:hover{
+    cursor: pointer;
+}

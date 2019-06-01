@@ -1,26 +1,68 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React , {Component} from 'react';
+import {BrowserRouter as Router , Switch , Route , Redirect } from 'react-router-dom';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+import './App.css'
+
+import Home from './pages/Home/Home'
+import Profile from './pages/Profile/Profile';
+import NotFound from './pages/404/404'
+import QuizDetail from './pages/QuizDetail/QuizDetail';
+import Exam from './pages/Exam/Exam';
+
+
+class App extends Component {
+
+  state = {
+    Loggedin:false,
+    token : '',
+    
+  }
+
+  toggleLogin = ()=>{
+    this.setState({
+      Loggedin : !this.state.Loggedin,
+    })
+  }
+
+  assignToken = (token)=>{
+
+    this.setState({
+      token,
+    })
+  }
+
+  render() {
+    const { Loggedin ,token} = this.state
+    return (
+      
+      <Router>
+        <Switch>
+          <Route exact path='/' render={()=>(
+            !Loggedin ? <Home login={this.toggleLogin} token_assign={this.assignToken}/> : <Redirect to='/profile' />
+          )} />
+          <Route exact path='/profile' render={()=>(
+            Loggedin ? <Profile token={token} token_assign={this.assignToken} login={this.toggleLogin}/> : <Redirect to='/' />
+          )}/>
+
+          <Route exact path='/quiz/:id' render={()=>(
+            Loggedin ? <QuizDetail /> : <Redirect to='/' />
+          )}/>
+          <Route exact path='/exam/:id' render={()=>(
+            Loggedin ? <Exam /> : <Redirect to='/' />
+          )}/>
+
+        
+          <Route component={NotFound} />
+          
+        </Switch>
+         
+      </Router>
+        
+      
+    );
+  }
+  
 }
 
 export default App;

@@ -1,0 +1,26 @@
+.heading {
+    text-align: center;
+    color : #2F4B26;
+
+    -webkit-box-shadow: 4px 3px 14px -4px rgba(47,75,38,1);
+    -moz-box-shadow: 4px 3px 14px -4px rgba(47,75,38,1);
+    box-shadow: 4px 3px 14px -4px rgba(47,75,38,1);
+    padding : 0.7em;
+    margin-top : 0;
+
+
+}
+
+.forms{
+    display : grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 1em;
+}
+
+.login-form, .signup-form{
+    padding: 1em;
+    -webkit-box-shadow: 4px 3px 14px -4px rgba(47,75,38,1);
+    -moz-box-shadow: 4px 3px 14px -4px rgba(47,75,38,1);
+    box-shadow: 4px 3px 14px -4px rgba(47,75,38,1);
+}
+

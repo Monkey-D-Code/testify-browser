@@ -1,0 +1,26 @@
+.sub-heading{
+    text-align: center;
+    color: #23CE6B;
+}
+
+
+
+label{
+    font-size : 0.8em;
+    
+}
+
+.login-button{
+    display : block;
+    margin : auto;
+    width : 50%;
+    height : 4em;
+    font-family: 'Montserrat', sans-serif;
+    background-color: #23CE6B;
+    border: none;
+    outline : none;
+    color: aliceblue;
+}
+.login-button:hover{
+    cursor: pointer;
+}
