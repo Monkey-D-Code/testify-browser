@@ -147,7 +147,7 @@ export default withRouter(class Exam extends Component{
             axios.post(`http://127.0.0.1:8000/quiz/${Quiz.id}/generate-report/`,this.state.AnswerSheet)
                 .then((response)=>{
                     this.setState({
-                        ajaxerror: JSON.stringify(response),
+                        ajaxerror: JSON.stringify(response.data),
                         modalOpen : true,
                     })
 
@@ -216,6 +216,7 @@ export default withRouter(class Exam extends Component{
                                         <Col sm={12}>
                                             <h4>{question.question_text}</h4>
                                             <p className='marks'>{question.marks}</p>
+                                            {question.isMultipleCorrect && <span><i class="fas fa-clipboard-list-check"></i></span>}
                                         </Col>
                                     </Row>
                                     <br/>
