@@ -5,6 +5,9 @@ import Modal from 'react-responsive-modal';
 import ReactCountdownClock from 'react-countdown-clock';
 import {Tab, Row, Nav,Col} from 'react-bootstrap';
 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 import  './Exam.css';
 
@@ -19,6 +22,8 @@ export default withRouter(class Exam extends Component{
         modalOpen:false,
         ajaxerror : '',
         Questions: [],
+        Quiz : {},
+        AnsweerSheet : [],
         
     }
 
@@ -41,6 +46,24 @@ export default withRouter(class Exam extends Component{
                 })
 
             })
+
+            axios.get(`http://127.0.0.1:8000/quiz/${this.props.match.params.id}/details/`)
+            .then((response) => {
+
+                this.setState({
+                    Quiz : response.data,
+                   
+                })
+                
+            })
+            .catch((response , error)=>{
+
+                console.log(error);
+                this.setState({
+                    ajaxerror: JSON.stringify(response),
+                    modalOpen : true,
+                })
+            })
     }
 
 
@@ -56,27 +79,89 @@ export default withRouter(class Exam extends Component{
         })
     }
 
+    removeElement = (array, elem)=> {  
+        const index = array.indexOf(elem);
+        if (index > -1) {
+            array.splice(index, 1);
+        }
+    }
+
+
+
+    temp = [];
+    // this fires when an option is checked or un checked
+    selectAnswer = (e)=>{
+        
+        
+        if(e.target.checked){
+            const checked_answer = {
+                question:parseInt(e.target.getAttribute('data-ques_id')),
+                option: parseInt(e.target.id),
+            }
+            this.temp.push(checked_answer);
+            console.log(this.temp);
+            toast.success(`You Have answered option ${e.target.id} for question ${e.target.getAttribute('data-ques_id')}`, {
+                position: "bottom-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                });
+                
+            
+        }else{
+            const unchecked_answer = {
+                question:parseInt(e.target.getAttribute('data-ques_id')),
+                option: parseInt(e.target.id),
+            };
+            
+            const i = this.temp.indexOf(unchecked_answer);
+            console.log(i);
+            if (i > -1) {
+                this.temp.splice(i, 1);
+            }
+            toast.error(`You Have unckecked option ${e.target.id} for question ${e.target.getAttribute('data-ques_id')}`, {
+                position: "bottom-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                });
+            console.log(this.temp);
+            
+        }
+    }
+
+    submit= ()=>{
+
+        this.setState({
+            AnsweerSheet : this.temp,
+        })
+    }
     
 
     render() {
 
-        const {modalOpen , ajaxerror , Questions} = this.state;
+        const {modalOpen , ajaxerror , Questions,Quiz} = this.state;
         
 
         return(
             <div className='exam'>
                 <div className='information'>
                     <div className='quiz-info'>
-                       
-                        <button type='button' className='login-button' >Submit</button>
+                        <h3 className='quiz-name'>{Quiz.name}</h3>
+                        <h5><i className="fas fa-clock"></i> {Quiz.allotted_time_in_minutes} Minutes</h5>
+                        
                     </div>
                     <div className='answered'>
-
+                        <button type='button' className='login-button' onClick={this.submit}>Submit</button>
                     </div>
                     <div className='left'>
 
                     </div>
-                    <ReactCountdownClock seconds={10*60}
+                    <ReactCountdownClock seconds={parseInt(Quiz.allotted_time_in_minutes)*60 || 0}
                      color="#87A330"
                      alpha={0.9}
                      size={110}
@@ -107,6 +192,7 @@ export default withRouter(class Exam extends Component{
                                     <Row>
                                         <Col sm={12}>
                                             <h4>{question.question_text}</h4>
+                                            <p className='marks'>{question.marks}</p>
                                         </Col>
                                     </Row>
                                     <br/>
@@ -114,7 +200,7 @@ export default withRouter(class Exam extends Component{
                                         <Col sm={8}>
                                             {question.options.map((option,index)=>{
                                                 return(
-                                                    <p key={index}><input type='checkbox' id={option.id} ques_id={question.id}/> {option.option_text}</p>
+                                                    <p key={index}><input type='checkbox' id={option.id} data-ques_id={question.id} onChange={this.selectAnswer}/> {option.option_text}</p>
                                                 );
                                             })}
                                             
@@ -137,6 +223,17 @@ export default withRouter(class Exam extends Component{
                         {ajaxerror}
                     </div>
                 </Modal>
+                <ToastContainer
+                    position="bottom-right"
+                    autoClose={2000}
+                    hideProgressBar={false}
+                    newestOnTop={false}
+                    closeOnClick
+                    rtl={false}
+                    pauseOnVisibilityChange
+                    draggable
+                    pauseOnHover
+                    />
             </div>
         );
     }

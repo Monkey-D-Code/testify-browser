@@ -67,3 +67,16 @@ input[type='checkbox']{
     padding : 0;
 }
 
+.marks{
+
+    background-color: #A5BE00;
+    color : #EBF2FA;
+    display: inline-block;
+    padding: 1em;
+    border-radius: 2em;
+}
+
+.quiz-info{
+    padding : 1em;
+    background-color: #9BC53D;
+}
