@@ -185,6 +185,7 @@ export default withRouter(class Exam extends Component{
                      color="#87A330"
                      alpha={0.9}
                      size={110}
+                     onComplete={this.submit}
                       />
                 </div>
 
