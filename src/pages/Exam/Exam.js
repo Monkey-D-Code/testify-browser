@@ -23,7 +23,7 @@ export default withRouter(class Exam extends Component{
         ajaxerror : '',
         Questions: [],
         Quiz : {},
-        AnsweerSheet : [],
+        AnswerSheet : [],
         
     }
 
@@ -99,7 +99,7 @@ export default withRouter(class Exam extends Component{
                 option: parseInt(e.target.id),
             }
             this.temp.push(checked_answer);
-            console.log(this.temp);
+            
             toast.success(`You Have answered option ${e.target.id} for question ${e.target.getAttribute('data-ques_id')}`, {
                 position: "bottom-right",
                 autoClose: 2000,
@@ -111,13 +111,10 @@ export default withRouter(class Exam extends Component{
                 
             
         }else{
-            const unchecked_answer = {
-                question:parseInt(e.target.getAttribute('data-ques_id')),
-                option: parseInt(e.target.id),
-            };
+           
             
-            const i = this.temp.indexOf(unchecked_answer);
-            console.log(i);
+            const i = this.temp.findIndex(i => i.question === parseInt(e.target.getAttribute('data-ques_id')));
+            
             if (i > -1) {
                 this.temp.splice(i, 1);
             }
@@ -129,16 +126,39 @@ export default withRouter(class Exam extends Component{
                 pauseOnHover: true,
                 draggable: true,
                 });
-            console.log(this.temp);
+            
             
         }
     }
 
     submit= ()=>{
+        
+        if(this.temp.length === 0){
+            this.setState({
+                ajaxerror: JSON.stringify('You Have Not Choosen Any Answer'),
+                modalOpen : true,
+            })
+        }else{
+            this.setState({
+                AnsweerSheet : this.temp,
+            })
+            axios.post(`http://127.0.0.1:8000/quiz/${this.state.Quiz.id}/generate-report/`,this.state.AnswerSheet)
+                .then((response)=>{
+                    this.setState({
+                        ajaxerror: JSON.stringify(response),
+                        modalOpen : true,
+                    })
 
-        this.setState({
-            AnsweerSheet : this.temp,
-        })
+                })
+                .catch((response,error)=>{
+                    this.setState({
+                        ajaxerror: JSON.stringify(response),
+                        modalOpen : true,
+                    })
+                    console.log(error);
+                })
+        }
+       
     }
     
 
