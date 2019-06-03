@@ -140,9 +140,11 @@ export default withRouter(class Exam extends Component{
             })
         }else{
             this.setState({
-                AnsweerSheet : this.temp,
+                AnswerSheet : this.temp,
             })
-            axios.post(`http://127.0.0.1:8000/quiz/${this.state.Quiz.id}/generate-report/`,this.state.AnswerSheet)
+            console.log(this.state.AnswerSheet)
+            const{Quiz} = this.state;
+            axios.post(`http://127.0.0.1:8000/quiz/${Quiz.id}/generate-report/`,this.state.AnswerSheet)
                 .then((response)=>{
                     this.setState({
                         ajaxerror: JSON.stringify(response),
