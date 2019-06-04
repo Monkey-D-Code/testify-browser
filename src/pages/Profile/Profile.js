@@ -6,6 +6,9 @@ import Modal from 'react-responsive-modal';
 import './Profile.css'
 
 
+// importing custom components
+import ReportList from '../../components/ReportList/ReportList';
+
 export default withRouter(class Profile extends Component {
 
     state = {
@@ -129,7 +132,7 @@ export default withRouter(class Profile extends Component {
                     })}
                 </div>
                 <div className='report'>
-                    results of previously given exams
+                    <ReportList />
                 </div>
 
                 <Modal open={modalOpen} onClose={this.onCloseModal} center closeOnOverlayClick style={{padding:'1.3em'}}>

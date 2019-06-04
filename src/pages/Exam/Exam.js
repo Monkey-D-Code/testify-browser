@@ -132,19 +132,18 @@ export default withRouter(class Exam extends Component{
     }
 
     submit= ()=>{
-        
-        if(this.temp.length === 0){
+        this.setState({
+            AnswerSheet : this.temp,
+        });
+        const {AnswerSheet} = this.state;
+        if(AnswerSheet.length === 0){
             this.setState({
                 ajaxerror: JSON.stringify('You Have Not Choosen Any Answer'),
                 modalOpen : true,
             })
         }else{
-            this.setState({
-                AnswerSheet : this.temp,
-            })
-            console.log(this.state.AnswerSheet)
             const{Quiz} = this.state;
-            axios.post(`http://127.0.0.1:8000/quiz/${Quiz.id}/generate-report/`,this.state.AnswerSheet)
+            axios.post(`http://127.0.0.1:8000/quiz/${Quiz.id}/generate-report/`, AnswerSheet)
                 .then((response)=>{
                     this.setState({
                         ajaxerror: JSON.stringify(response.data),
@@ -183,7 +182,7 @@ export default withRouter(class Exam extends Component{
                     <div className='left'>
 
                     </div>
-                    <ReactCountdownClock seconds={parseInt(Quiz.allotted_time_in_minutes)*60 || 0}
+                    <ReactCountdownClock seconds={parseInt(Quiz.allotted_time_in_minutes)*60 || 60}
                      color="#87A330"
                      alpha={0.9}
                      size={110}

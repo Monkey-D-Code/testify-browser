@@ -16,17 +16,25 @@ export default withRouter(class Home extends Component {
     
 
     render() {
-
+        const { url,login,token_assign,setUser } = this.props;
         return(
             <div className='Home'>
                 <h1 className='heading'>Welcome To Testify</h1>
                 <div className='forms'>
                     <div className='login-form'>
-                        <Login login={this.props.login} token_assign={this.props.token_assign}/>
+                        <Login 
+                            login={login} 
+                            token_assign={token_assign} 
+                            setUser={setUser}
+                            url={url}/>
 
                     </div>
                     <div className='signup-form'>
-                       <Signup login={this.props.login} token_assign={this.props.token_assign}/>
+                       <Signup 
+                            login={login} 
+                            token_assign={token_assign} 
+                            setUser={setUser}
+                            url={url} />
 
                     </div>
                 </div>

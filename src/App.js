@@ -16,7 +16,17 @@ class App extends Component {
   state = {
     Loggedin:false,
     token : '',
+    Student: {},
+    baseAjaxUrl : 'http://127.0.0.1:8000',
     
+  }
+
+  setStudent = (student) =>{
+    if(typeof(student)==='object'){
+      this.setState({
+        Student : student,
+      })
+    }
   }
 
   toggleLogin = ()=>{
@@ -33,23 +43,23 @@ class App extends Component {
   }
 
   render() {
-    const { Loggedin ,token} = this.state
+    const { Loggedin ,token , baseAjaxUrl , Student} = this.state
     return (
       
       <Router>
         <Switch>
           <Route exact path='/' render={()=>(
-            !Loggedin ? <Home login={this.toggleLogin} token_assign={this.assignToken}/> : <Redirect to='/profile' />
+            !Loggedin ? <Home login={this.toggleLogin} token_assign={this.assignToken} setUser={this.setStudent} url={baseAjaxUrl}/> : <Redirect to='/profile' />
           )} />
           <Route exact path='/profile' render={()=>(
-            Loggedin ? <Profile token={token} token_assign={this.assignToken} login={this.toggleLogin}/> : <Redirect to='/' />
+            Loggedin ? <Profile token={token} token_assign={this.assignToken} login={this.toggleLogin} url={baseAjaxUrl}/> : <Redirect to='/' />
           )}/>
 
           <Route exact path='/quiz/:id' render={()=>(
-            Loggedin ? <QuizDetail /> : <Redirect to='/' />
+            Loggedin ? <QuizDetail url={baseAjaxUrl}/> : <Redirect to='/' />
           )}/>
-          <Route exact path='/exam/:id' render={()=>(
-            Loggedin ? <Exam /> : <Redirect to='/' />
+          <Route exact path='/:student_id/exam/:id' render={()=>(
+            Loggedin ? <Exam student={Student} url={baseAjaxUrl}/> : <Redirect to='/' />
           )}/>
 
         

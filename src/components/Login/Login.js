@@ -43,6 +43,8 @@ export default withRouter(class Login extends Component {
             password,
             
         } = this.state;
+
+        const {url} = this.props;
         this.setState({
             Loading:true,
         });
@@ -76,7 +78,7 @@ export default withRouter(class Login extends Component {
                 password,
             }
 
-            axios.post('http://127.0.0.1:8000/accounts/login/',info)
+            axios.post(`${url}/accounts/login/`,info)
                 .then((response)=>{
                     this.props.token_assign(response.data.token);
                     this.props.login();
