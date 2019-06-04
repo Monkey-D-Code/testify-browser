@@ -78,4 +78,6 @@
     background-color: #aaa; /* or add it to the track */
     display:block;
   }
-  
+  .profile-image {
+      width : 100%;
+  }

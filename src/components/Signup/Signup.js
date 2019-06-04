@@ -168,9 +168,25 @@ class Signup extends Component {
                         axios.post('http://127.0.0.1:8000/accounts/login/',info)
                             .then((response)=>{
                                 this.props.token_assign(response.data.token);
-                                this.props.login();
+                                axios.post(`${this.props.url}/accounts/student-from-token/`,{token:response.data.token})
+                                .then((res)=>{
+                                    
+                                    this.props.setUser(res.data);
+                                    this.props.login();
+                            
+                                    this.props.history.push('/profile');
+
+                                })
+                                .catch((response , error)=>{
+                                    console.log(error);
+                                    this.setState({
+                                        ajaxerror:JSON.stringify(response),
+                                        modalOpen:true,
+                                        Loading:false,
+                                    })
+
+                                })
                                 
-                                this.props.history.push('/profile');
                             })
                             .catch((response , err)=>{
                                 console.log(err);

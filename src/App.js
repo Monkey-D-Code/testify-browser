@@ -52,13 +52,13 @@ class App extends Component {
             !Loggedin ? <Home login={this.toggleLogin} token_assign={this.assignToken} setUser={this.setStudent} url={baseAjaxUrl}/> : <Redirect to='/profile' />
           )} />
           <Route exact path='/profile' render={()=>(
-            Loggedin ? <Profile token={token} token_assign={this.assignToken} login={this.toggleLogin} url={baseAjaxUrl}/> : <Redirect to='/' />
+            Loggedin ? <Profile token={token} token_assign={this.assignToken} login={this.toggleLogin} url={baseAjaxUrl} student={Student}/> : <Redirect to='/' />
           )}/>
 
           <Route exact path='/quiz/:id' render={()=>(
-            Loggedin ? <QuizDetail url={baseAjaxUrl}/> : <Redirect to='/' />
+            Loggedin ? <QuizDetail url={baseAjaxUrl} student={Student} /> : <Redirect to='/' />
           )}/>
-          <Route exact path='/:student_id/exam/:id' render={()=>(
+          <Route exact path='/exam/:id' render={()=>(
             Loggedin ? <Exam student={Student} url={baseAjaxUrl}/> : <Redirect to='/' />
           )}/>
 

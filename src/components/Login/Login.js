@@ -81,9 +81,26 @@ export default withRouter(class Login extends Component {
             axios.post(`${url}/accounts/login/`,info)
                 .then((response)=>{
                     this.props.token_assign(response.data.token);
-                    this.props.login();
+                    axios.post(`${url}/accounts/student-from-token/`,{token:response.data.token})
+                        .then((res)=>{
+                            
+                            this.props.setUser(res.data);
+                            this.props.login();
                     
-                    this.props.history.push('/profile');
+                            this.props.history.push('/profile');
+
+                        })
+                        .catch((response , error)=>{
+                            console.log(error);
+                            this.setState({
+                                ajaxerror:JSON.stringify(response),
+                                modalOpen:true,
+                                Loading:false,
+                            })
+
+                        })
+
+                    
                 })
                 .catch((response , err)=>{
                     console.log(err);

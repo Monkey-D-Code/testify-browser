@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component , Fragment} from 'react';
 import {withRouter} from 'react-router-dom';
 import axios from 'axios';
 import Modal from 'react-responsive-modal';
@@ -12,6 +12,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import  './Exam.css';
 
 
+// custom components
+import SubmitMessage from '../../components/SubmitMessage/SubmitMessage';
 
 
 
@@ -24,6 +26,8 @@ export default withRouter(class Exam extends Component{
         Questions: [],
         Quiz : {},
         AnswerSheet : [],
+        submit : false,
+        report : {},
         
     }
 
@@ -132,6 +136,8 @@ export default withRouter(class Exam extends Component{
     }
 
     submit= ()=>{
+        const {student} = this.props;
+
         this.setState({
             AnswerSheet : this.temp,
         });
@@ -143,11 +149,11 @@ export default withRouter(class Exam extends Component{
             })
         }else{
             const{Quiz} = this.state;
-            axios.post(`http://127.0.0.1:8000/quiz/${Quiz.id}/generate-report/`, AnswerSheet)
+            axios.post(`http://127.0.0.1:8000/quiz/${Quiz.id}/generate-report/${student.id}/`, AnswerSheet)
                 .then((response)=>{
                     this.setState({
-                        ajaxerror: JSON.stringify(response.data),
-                        modalOpen : true,
+                        submit : true,
+                        report : response.data,
                     })
 
                 })
@@ -163,101 +169,111 @@ export default withRouter(class Exam extends Component{
     }
     
 
-    render() {
+    render = ()=> {
 
-        const {modalOpen , ajaxerror , Questions,Quiz} = this.state;
+        const {modalOpen , ajaxerror , Questions,Quiz , submit , report , AnswerSheet} = this.state;
         
+        if(submit){
+            return(
+                <SubmitMessage report={report} />
+            );
+        }else{
 
-        return(
-            <div className='exam'>
-                <div className='information'>
-                    <div className='quiz-info'>
-                        <h3 className='quiz-name'>{Quiz.name}</h3>
-                        <h5><i className="fas fa-clock"></i> {Quiz.allotted_time_in_minutes} Minutes</h5>
-                        
-                    </div>
-                    <div className='answered'>
-                        <button type='button' className='login-button' onClick={this.submit}>Submit</button>
-                    </div>
-                    <div className='left'>
+            return(
+            
+                <div className='exam'>
+                    <div className='information'>
+                        <div className='quiz-info'>
+                            <h3 className='quiz-name'>{Quiz.name}</h3>
+                            <h5><i className="fas fa-clock"></i> {Quiz.allotted_time_in_minutes} Minutes</h5>
+                            
+                        </div>
+                        <div className='answered'>
+                            <button type='button' className='login-button' onClick={this.submit}>Submit</button>
+                        </div>
+                        <div className='left'>
 
+                        </div>
+                        <ReactCountdownClock seconds={parseInt(Quiz.allotted_time_in_minutes)*60 || 60}
+                        color="#87A330"
+                        alpha={0.9}
+                        size={110}
+                        onComplete={this.submit}
+                        />
                     </div>
-                    <ReactCountdownClock seconds={parseInt(Quiz.allotted_time_in_minutes)*60 || 60}
-                     color="#87A330"
-                     alpha={0.9}
-                     size={110}
-                     onComplete={this.submit}
-                      />
-                </div>
 
-                <div className='question'>
-                <Tab.Container id="left-tabs-example" defaultActiveKey="0">
-                <Row>
-                    <Col sm={4}>
-                        <Nav variant="pills" className="flex-column">
+                    <div className='question'>
+                    <Tab.Container id="left-tabs-example" defaultActiveKey="0">
+                    <Row>
+                        <Col sm={4}>
+                            <Nav variant="pills" className="flex-column">
+                                {Questions.map((question,index)=>{
+                                    return(
+                                    <Nav.Item key={index}>
+                                        <Nav.Link eventKey={index}>{question.question_text}</Nav.Link>
+                                    </Nav.Item>
+                                    );
+                                })}
+                                
+                            </Nav>
+                            
+                        </Col>
+                        <Col sm={8}>
+                        <Tab.Content>
                             {Questions.map((question,index)=>{
                                 return(
-                                <Nav.Item key={index}>
-                                    <Nav.Link eventKey={index}>{question.question_text}</Nav.Link>
-                                </Nav.Item>
+                                    <Tab.Pane eventKey={index} key={index}>
+                                        <Row>
+                                            <Col sm={12}>
+                                                <h4>{question.question_text}</h4>
+                                                <p className='marks'>{question.marks}</p>
+                                                {question.isMultipleCorrect && <span><i class="fas fa-clipboard-list-check"></i></span>}
+                                            </Col>
+                                        </Row>
+                                        <br/>
+                                        <Row>
+                                            <Col sm={8}>
+                                                {question.options.map((option,index)=>{
+                                                    return(
+                                                        <p key={index}><input type='checkbox' id={option.id} data-ques_id={question.id} onChange={this.selectAnswer}/> {option.option_text}</p>
+                                                    );
+                                                })}
+                                                
+                                            </Col>
+                                        </Row>
+                                    </Tab.Pane>
                                 );
                             })}
                             
-                        </Nav>
+                        </Tab.Content>
+                        </Col>
+                    </Row>
+                    </Tab.Container>
                         
-                    </Col>
-                    <Col sm={8}>
-                    <Tab.Content>
-                        {Questions.map((question,index)=>{
-                            return(
-                                <Tab.Pane eventKey={index} key={index}>
-                                    <Row>
-                                        <Col sm={12}>
-                                            <h4>{question.question_text}</h4>
-                                            <p className='marks'>{question.marks}</p>
-                                            {question.isMultipleCorrect && <span><i class="fas fa-clipboard-list-check"></i></span>}
-                                        </Col>
-                                    </Row>
-                                    <br/>
-                                    <Row>
-                                        <Col sm={8}>
-                                            {question.options.map((option,index)=>{
-                                                return(
-                                                    <p key={index}><input type='checkbox' id={option.id} data-ques_id={question.id} onChange={this.selectAnswer}/> {option.option_text}</p>
-                                                );
-                                            })}
-                                            
-                                        </Col>
-                                    </Row>
-                                </Tab.Pane>
-                            );
-                        })}
-                        
-                    </Tab.Content>
-                    </Col>
-                </Row>
-                </Tab.Container>
-                    
-                </div>
-                <Modal open={modalOpen} onClose={this.onCloseModal} center closeOnOverlayClick style={{padding:'1.3em'}}>
-                    <h2>Error Occured : </h2>
-                    
-                    <div>
-                        {ajaxerror}
                     </div>
-                </Modal>
-                <ToastContainer
-                    position="bottom-right"
-                    autoClose={2000}
-                    hideProgressBar={false}
-                    newestOnTop={false}
-                    closeOnClick
-                    rtl={false}
-                    pauseOnVisibilityChange
-                    draggable
-                    pauseOnHover
-                    />
-            </div>
-        );
+                    <Modal open={modalOpen} onClose={this.onCloseModal} center closeOnOverlayClick style={{padding:'1.3em'}}>
+                        <h2>Error Occured : </h2>
+                        
+                        <div>
+                            {ajaxerror}
+                        </div>
+                    </Modal>
+                    <ToastContainer
+                        position="bottom-right"
+                        autoClose={2000}
+                        hideProgressBar={false}
+                        newestOnTop={false}
+                        closeOnClick
+                        rtl={false}
+                        pauseOnVisibilityChange
+                        draggable
+                        pauseOnHover
+                        />
+                </div>
+             );
+        };
+            
+        
+    
     }
 })
