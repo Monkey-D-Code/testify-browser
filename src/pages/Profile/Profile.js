@@ -27,8 +27,8 @@ export default withRouter(class Profile extends Component {
             this.props.login()
             this.props.history.push('/')
         }
-
-        axios.get('http://127.0.0.1:8000/quiz/list/')
+        const {url} = this.props;
+        axios.get(`${url}/quiz/list/`)
             .then((response) => {
                 this.setState({
                     Quizzes : response.data,
@@ -42,7 +42,7 @@ export default withRouter(class Profile extends Component {
                 })
             });
         const {student} = this.props;
-        axios.get(`http://127.0.0.1:8000/quiz/student/${student.id}/reports/`)
+        axios.get(`${url}/quiz/student/${student.id}/reports/`)
             .then((response)=>{
                 this.setState({
                     Reports : response.data,
