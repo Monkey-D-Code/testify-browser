@@ -10,6 +10,7 @@
     "react-cookies": "^0.1.1",
     "react-countdown-clock": "^2.6.0",
     "react-dom": "^16.8.6",
+    "react-full-screen": "^0.2.4",
     "react-responsive-modal": "^4.0.1",
     "react-router-dom": "^5.0.0",
     "react-scripts": "3.0.1",

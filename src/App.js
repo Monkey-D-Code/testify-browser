@@ -18,7 +18,7 @@ class App extends Component {
     token : '',
     Student: {},
     baseAjaxUrl : 'http://127.0.0.1:8000',
-    
+    fullScreenActive : false,
   }
 
   setStudent = (student) =>{
