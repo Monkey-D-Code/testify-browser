@@ -1,6 +1,6 @@
 import React , {Component} from 'react';
 import {BrowserRouter as Router , Switch , Route , Redirect } from 'react-router-dom';
-
+import Fullscreen from "react-full-screen";
 
 import './App.css'
 
@@ -29,6 +29,23 @@ class App extends Component {
     }
   }
 
+  goFullScreen = ()=>{
+    this.setState({
+      fullScreenActive : true,
+    })
+  }
+
+  exitFullScreen = ()=>{
+    this.setState({
+      fullScreenActive : false,
+    })
+  }
+
+  changeFullScreen = (submit , ) => {
+
+
+  }
+
   toggleLogin = ()=>{
     this.setState({
       Loggedin : !this.state.Loggedin,
@@ -43,31 +60,35 @@ class App extends Component {
   }
 
   render() {
-    const { Loggedin ,token , baseAjaxUrl , Student} = this.state
+    const { Loggedin ,token , baseAjaxUrl , Student , fullScreenActive} = this.state
     return (
-      
-      <Router>
-        <Switch>
-          <Route exact path='/' render={()=>(
-            !Loggedin ? <Home login={this.toggleLogin} token_assign={this.assignToken} setUser={this.setStudent} url={baseAjaxUrl}/> : <Redirect to='/profile' />
-          )} />
-          <Route exact path='/profile' render={()=>(
-            Loggedin ? <Profile token={token} token_assign={this.assignToken} login={this.toggleLogin} url={baseAjaxUrl} student={Student}/> : <Redirect to='/' />
-          )}/>
+      <Fullscreen 
+          enabled={fullScreenActive}
+          onChange={this.changeFullScreen}
+        >
+        <Router>
+          <Switch>
+            <Route exact path='/' render={()=>(
+              !Loggedin ? <Home login={this.toggleLogin} token_assign={this.assignToken} setUser={this.setStudent} url={baseAjaxUrl}/> : <Redirect to='/profile' />
+            )} />
+            <Route exact path='/profile' render={()=>(
+              Loggedin ? <Profile token={token} token_assign={this.assignToken} login={this.toggleLogin} url={baseAjaxUrl} student={Student}/> : <Redirect to='/' />
+            )}/>
 
-          <Route exact path='/quiz/:id' render={()=>(
-            Loggedin ? <QuizDetail url={baseAjaxUrl} student={Student} /> : <Redirect to='/' />
-          )}/>
-          <Route exact path='/exam/:id' render={()=>(
-            Loggedin ? <Exam student={Student} url={baseAjaxUrl}/> : <Redirect to='/' />
-          )}/>
+            <Route exact path='/quiz/:id' render={()=>(
+              Loggedin ? <QuizDetail url={baseAjaxUrl} student={Student} goFullScreen={this.goFullScreen} /> : <Redirect to='/' />
+            )}/>
+            <Route exact path='/exam/:id' render={()=>(
+              Loggedin ? <Exam student={Student} url={baseAjaxUrl} goFullScreen={this.goFullScreen} exitFullScreen={this.exitFullScreen}/> : <Redirect to='/' />
+            )}/>
 
-        
-          <Route component={NotFound} />
           
-        </Switch>
-         
-      </Router>
+            <Route component={NotFound} />
+            
+          </Switch>
+          
+        </Router>
+      </Fullscreen>
         
       
     );

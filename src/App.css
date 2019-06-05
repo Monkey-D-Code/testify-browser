@@ -31,3 +31,9 @@ input[type='text'] , input[type='number'] , input[type='password'] , input[type=
     margin : 0.4em;
 
 }
+
+
+   
+  .fullscreen-enabled {
+    background: #fff;
+  }

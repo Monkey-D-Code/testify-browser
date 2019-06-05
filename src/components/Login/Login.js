@@ -45,9 +45,7 @@ export default withRouter(class Login extends Component {
         } = this.state;
 
         const {url} = this.props;
-        this.setState({
-            Loading:true,
-        });
+        
         let errors = []
         if(username.length ===0 ){
             errors.push({
@@ -63,7 +61,7 @@ export default withRouter(class Login extends Component {
         if(password.length === 0){
             errors.push({
                 field : 'password',
-                message:'Plese enter your choosen password',
+                message:'Please enter your chosen password',
             })
         }else if(password.length > 0 && password.length < 8){
             errors.push({
@@ -77,7 +75,9 @@ export default withRouter(class Login extends Component {
                 username,
                 password,
             }
-
+            this.setState({
+                Loading:true,
+            });
             axios.post(`${url}/accounts/login/`,info)
                 .then((response)=>{
                     this.props.token_assign(response.data.token);

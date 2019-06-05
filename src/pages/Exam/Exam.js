@@ -186,7 +186,7 @@ export default withRouter(class Exam extends Component{
                             submit : true,
                             report : response.data,
                         })
-
+                        this.props.exitFullScreen();
                     })
                     .catch((response,error)=>{
                         this.setState({
@@ -252,7 +252,7 @@ export default withRouter(class Exam extends Component{
         
         if(submit){
             return(
-                <SubmitMessage report={report} />
+                <SubmitMessage report={report} exitFullScreen={this.props.exitFullScreen}/>
             );
         }else{
 

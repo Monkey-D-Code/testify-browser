@@ -101,7 +101,7 @@ class Signup extends Component {
         if(email === ''){
             errors.push({
                 field:'email',
-                message:'An Email address is mandetory',
+                message:'An Email address is mandatory',
             })
         }
 

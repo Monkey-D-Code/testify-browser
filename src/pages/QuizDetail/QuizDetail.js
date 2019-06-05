@@ -55,7 +55,7 @@ export default withRouter(class QuizDetail extends Component{
 
     render() {
         const {modalOpen , ajaxerror , Quiz} = this.state;
-
+        const {goFullScreen} = this.props;
 
         return(
             <div className='quiz-details'>
@@ -75,7 +75,7 @@ export default withRouter(class QuizDetail extends Component{
                     
                 </p>
                 <br/>
-               <NavLink to={`/exam/${Quiz.id}`} className='btn' quiz={Quiz}>Start Quiz</NavLink>
+               <NavLink to={`/exam/${Quiz.id}`} className='btn' quiz={Quiz} onClick={goFullScreen}>Start Quiz</NavLink>
 
 
                 <Modal open={modalOpen} onClose={this.onCloseModal} center closeOnOverlayClick style={{padding:'1.3em'}}>
