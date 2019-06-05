@@ -3,7 +3,7 @@ import {withRouter} from 'react-router-dom';
 import axios from 'axios';
 import Modal from 'react-responsive-modal';
 import ReactCountdownClock from 'react-countdown-clock';
-import {Tab, Row, Nav,Col , Table} from 'react-bootstrap';
+import {Tab, Row, Nav,Col,Table} from 'react-bootstrap';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -35,9 +35,9 @@ export default withRouter(class Exam extends Component{
     }
 
     componentWillMount = () => {
-
+        const {url} = this.props;
         const quiz_id = this.props.match.params.id;
-        axios.get(`http://127.0.0.1:8000/quiz/${quiz_id}/questions/`)
+        axios.get(`${url}/quiz/${quiz_id}/questions/`)
             .then((response)=>{
 
                 this.setState({
@@ -52,9 +52,9 @@ export default withRouter(class Exam extends Component{
                     ajaxerror: JSON.stringify(response),
                 })
 
-            })
+            });
 
-            axios.get(`http://127.0.0.1:8000/quiz/${this.props.match.params.id}/details/`)
+            axios.get(`${url}/quiz/${this.props.match.params.id}/details/`)
             .then((response) => {
 
                 this.setState({
@@ -94,12 +94,29 @@ export default withRouter(class Exam extends Component{
         }
     }
 
+    findQuestion = (question_id)=>{
+        const{Questions} = this.state;
+        const i = Questions.findIndex(i => i.id === parseInt(question_id));
+        return Questions[i];
+    }
 
+    findOption = (question_id , option_id)=>{
+        const{Questions} = this.state;
+        const i = Questions.findIndex(i => i.id === parseInt(question_id));
+        const options =  Questions[i].options;
+        const opt_key = options.findIndex(i => i.id === parseInt(option_id));
+        return options[opt_key];
 
+    }
+
+    onTimerEnd = ()=>{
+        this.finalize();
+        this.submit();
+    }
     temp = [];
     // this fires when an option is checked or un checked
     selectAnswer = (e)=>{
-        const {Quiz , Questions} = this.state;
+        const {Quiz} = this.state;
         
         if(e.target.checked){
             const checked_answer = {
@@ -111,8 +128,9 @@ export default withRouter(class Exam extends Component{
                 answered: this.temp.length,
                 un_answered : (Quiz.no_of_questions - this.temp.length),
             })
-            
-            toast.success(`You Have answered option ${e.target.id} for question ${e.target.getAttribute('data-ques_id')}`, {
+            const question = this.findQuestion(e.target.getAttribute('data-ques_id'));
+            const option = this.findOption(e.target.getAttribute('data-ques_id') , e.target.id);
+            toast.success(`Q: ${question.question_text} \n A: ${option.option_text}`, {
                 position: "bottom-right",
                 autoClose: 2000,
                 hideProgressBar: false,
@@ -134,7 +152,9 @@ export default withRouter(class Exam extends Component{
                 answered: this.temp.length,
                 un_answered : (Quiz.no_of_questions - this.temp.length),
             })
-            toast.error(`You Have unckecked option ${e.target.id} for question ${e.target.getAttribute('data-ques_id')}`, {
+            const question = this.findQuestion(e.target.getAttribute('data-ques_id'));
+            const option = this.findOption(e.target.getAttribute('data-ques_id') , e.target.id);
+            toast.error(`Q: ${question.question_text}  \n  A: ${option.option_text}`, {
                 position: "bottom-right",
                 autoClose: 2000,
                 hideProgressBar: false,
@@ -148,7 +168,7 @@ export default withRouter(class Exam extends Component{
     }
 
     submit= ()=>{
-        const {student} = this.props;
+        const {student, url} = this.props;
         const {finalized , AnswerSheet} = this.state;
 
         if(finalized){
@@ -160,7 +180,7 @@ export default withRouter(class Exam extends Component{
                 })
             }else{
                 const{Quiz} = this.state;
-                axios.post(`http://127.0.0.1:8000/quiz/${Quiz.id}/generate-report/${student.id}/`, AnswerSheet)
+                axios.post(`${url}/quiz/${Quiz.id}/generate-report/${student.id}/`, AnswerSheet)
                     .then((response)=>{
                         this.setState({
                             submit : true,
@@ -186,39 +206,43 @@ export default withRouter(class Exam extends Component{
        
     }
     
-    finalize = ()=>{
+    finalize = (e)=>{
         const {finalized} = this.state;
-        if(!finalized){
-            if(this.temp.length > 0){
-            this.setState({
-                AnswerSheet : this.temp,
-                finalized : true,
-            });
-            toast.info(`Finalization Successfull , Now Submit to view score.`, {
-                position: "bottom-center",
-                autoClose: 4000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                });
-            }else{
-                this.setState({
-                    ajaxerror: 'You need to tick some options for this to work',
-                    modalOpen : true,
-                })
+        
 
+        
+            if(!finalized){
+                if(this.temp.length > 0){
+                this.setState({
+                    AnswerSheet : this.temp,
+                    finalized : true,
+                });
+                toast.info(`Finalization Successfull , Now Submit to view score.`, {
+                    position: "bottom-center",
+                    autoClose: 4000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    });
+                }else{
+                    this.setState({
+                        ajaxerror: 'You need to tick some options for this to work',
+                        modalOpen : true,
+                    })
+
+                }
+            }else{
+                toast.warning('Already Finalized Your answers. Please hit submit.', {
+                    position: "bottom-center",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
             }
-        }else{
-            toast.warning('Already Finalized Your answers. Please hit submit.', {
-                position: "bottom-center",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-            });
-        }
+        
         
     }
 
@@ -246,30 +270,31 @@ export default withRouter(class Exam extends Component{
                             <button type='button' className='signup-button' onClick={this.finalize} style={{width:'100%'}}><i className="fas fa-eye"></i> Finalize</button>
                         </div>
                         <div className='left'>
-                        <Table striped bordered hover style={{height:'100%'}}>
-                                        <thead>
-                                            <tr>
-                                                <th>Answered</th>
-                                                <th>Not Answered</th>
-                                            
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>{answered}</td>
-                                                <td>{un_answered}</td>
-                                            
-                                            </tr>
-                                            
-                                        </tbody>
+                            <Table striped bordered hover style={{height:'100%'}}>
+                                <thead>
+                                    <tr>
+                                        <th>Answered</th>
+                                        <th>Not Answered</th>
+                                    
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>{answered}</td>
+                                        <td>{un_answered}</td>
+                                    
+                                    </tr>
+                                    
+                                </tbody>
                             </Table>
                         </div>
                         <ReactCountdownClock seconds={parseInt(Quiz.allotted_time_in_minutes)*60 || 60}
-                        color="#87A330"
-                        alpha={0.9}
-                        size={127}
-                        onComplete={this.submit}
-                        style={{display:'block',margin:'auto'}}
+                            color="#87A330"
+                            alpha={0.9}
+                            size={127}
+                            onComplete={this.onTimerEnd}
+                            style={{display:'block',margin:'auto'}}
+                            id='timer'
                         />
                     </div>
 
@@ -281,7 +306,7 @@ export default withRouter(class Exam extends Component{
                                 {Questions.map((question,index)=>{
                                     return(
                                     <Nav.Item key={index}>
-                                        <Nav.Link eventKey={index}>{question.question_text}</Nav.Link>
+                                        <Nav.Link eventKey={index}><i className="fas fa-medal"></i> {question.question_text}</Nav.Link>
                                     </Nav.Item>
                                     );
                                 })}
@@ -306,7 +331,7 @@ export default withRouter(class Exam extends Component{
                                             <Col sm={8}>
                                                 {question.options.map((option,index)=>{
                                                     return(
-                                                        <p key={index}><input type='checkbox' id={option.id} data-ques_id={question.id} onChange={this.selectAnswer}/> <label htmlFor={option.id}>{option.option_text}</label></p>
+                                                        <p key={index} className='option'><input type='checkbox' id={option.id} data-ques_id={question.id} onChange={this.selectAnswer} /> <label htmlFor={option.id}>{option.option_text}</label></p>
                                                     );
                                                 })}
                                                 

@@ -106,8 +106,8 @@ export default withRouter(class Profile extends Component {
                         
                         return(
                             <div className='quiz-card' key={index}>
-                                <h4>{quiz.name}</h4>
-                                <p>{quiz.syllabus}</p>
+                                <h4><i className="fas fa-medal"></i> {quiz.name}</h4>
+                                <p><i className="fas fa-book"></i> {quiz.syllabus}</p>
                                 <img src={quiz.cover_image_url} alt={quiz.name} style={{width:'100%'}}/>
                                 <NavLink to={`/quiz/${quiz.id}`} className='btn'>Know More</NavLink>
                             </div>

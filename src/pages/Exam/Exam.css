@@ -81,3 +81,16 @@ input[type='checkbox']{
     padding : 1em;
     background-color: #9BC53D;
 }
+
+.option{
+
+    -webkit-box-shadow: 6px 6px 17px -5px rgba(84,84,84,1);
+    -moz-box-shadow: 6px 6px 17px -5px rgba(84,84,84,1);
+    box-shadow: 6px 6px 17px -5px rgba(84,84,84,1);
+    padding : 0.5em;
+    
+}
+
+.option > input[type='checkbox']:hover{
+    cursor: pointer;
+}
